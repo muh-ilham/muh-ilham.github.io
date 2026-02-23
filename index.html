@@ -1093,8 +1093,7 @@
             <li><a href="#about" onclick="navigateTo('about')">About</a></li>
             <li><a href="#projects" onclick="navigateTo('projects')">Projects</a></li>
             <li><a href="#contact" onclick="navigateTo('contact')">Contact</a></li>
-            <li><a href="<?= scriptUrl ?>?page=admin" target="_top" id="nav-login" title="Admin Login"><i
-                        class="fas fa-lock"></i></a>
+            <li><a href="#" target="_top" id="nav-login" title="Admin Login"><i class="fas fa-lock"></i></a>
             </li>
             <li><a id="theme-toggle" title="Toggle Light/Dark Mode" style="cursor: pointer;"><i
                         class="fas fa-sun"></i></a></li>
@@ -1407,6 +1406,12 @@
                     themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
                 }
             });
+
+            // Set Admin Login Link Dynamically
+            const navLoginBtn = document.getElementById('nav-login');
+            if (navLoginBtn) {
+                navLoginBtn.href = SCRIPT_URL + '?page=admin';
+            }
 
             // Cek hash untuk navigasi langsung
             const hash = window.location.hash.replace('#', '');
