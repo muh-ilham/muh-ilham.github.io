@@ -1545,7 +1545,10 @@
                     const data = result.about;
 
                     // Update Hero & Logo
-                    if (data.logoText) document.getElementById('nav-logo').innerText = data.logoText;
+                    if (data.logoText) {
+                        document.getElementById('nav-logo').innerText = data.logoText;
+                        document.title = data.logoText;
+                    }
                     if (data.heroGreeting) document.getElementById('hero-greeting').innerText = data.heroGreeting;
                     if (data.heroTitle) document.getElementById('hero-title').innerText = data.heroTitle;
                     if (data.heroSubtitle) document.getElementById('hero-subtitle-prefix').innerText = data.heroSubtitle;
