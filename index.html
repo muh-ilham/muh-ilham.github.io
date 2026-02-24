@@ -24,6 +24,7 @@
             --border-color: #30363d;
             --gradient-1: linear-gradient(90deg, #ff7eb3, #ff758c);
             --gradient-2: linear-gradient(90deg, #58a6ff, #1f6feb);
+            --cursor-glow: radial-gradient(600px circle at var(--x, 0) var(--y, 0), rgba(88, 166, 255, 0.15), transparent 40%);
             --transition: all 0.3s ease;
         }
 
@@ -35,6 +36,7 @@
             --text-main: #000000;
             --text-muted: #666666;
             --border-color: #eaeaea;
+            --cursor-glow: radial-gradient(600px circle at var(--x, 0) var(--y, 0), rgba(0, 0, 0, 0.05), transparent 40%);
         }
 
         [data-theme="light"] body {
@@ -305,6 +307,21 @@
             overflow-x: hidden;
             line-height: 1.6;
             scroll-behavior: smooth;
+        }
+
+        /* Cursor Glow Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--cursor-glow);
+            z-index: 9999;
+            pointer-events: none;
+            /* Allows clicking through it */
+            transition: background 0.3s ease;
         }
 
         /* Terapkan custom scrollbar */
@@ -1474,6 +1491,12 @@
             if (hash && sections.includes(hash)) {
                 navigateTo(hash);
             }
+
+            // Glow Cursor Tracking
+            document.addEventListener('mousemove', (e) => {
+                document.documentElement.style.setProperty('--x', e.clientX + 'px');
+                document.documentElement.style.setProperty('--y', e.clientY + 'px');
+            });
 
             // Mulai animasi
             setTimeout(typeWriter, 1000);
