@@ -1245,6 +1245,7 @@
                         <li class="active" onclick="switchAdminPanel('admin-about')">Manage About</li>
                         <li onclick="switchAdminPanel('admin-projects')">Manage Projects</li>
                         <li onclick="switchAdminPanel('admin-messages')">Messages</li>
+                        <li onclick="switchAdminPanel('admin-settings')">Settings</li>
                     </ul>
                 </div>
 
@@ -1391,6 +1392,31 @@
                                 <tbody id="admin-msg-tbody">
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- Admin Settings -->
+                    <div id="admin-settings" class="admin-panel">
+                        <h3>Account Settings</h3>
+                        <div id="admin-settings-alert" class="alert"></div>
+                        <div class="admin-card" style="max-width: 500px;">
+                            <h4 style="margin-bottom: 15px;">Change Password</h4>
+                            <form id="formChangePassword" onsubmit="changePassword(event)" class="contact-form">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" id="current-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="new-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" id="confirm-password" required>
+                                </div>
+                                <button type="submit" class="submit-btn" id="btn-change-pwd">Update Password</button>
+                                <div class="loader" id="loader-change-pwd"></div>
+                            </form>
                         </div>
                     </div>
 
@@ -1549,6 +1575,15 @@
                         document.getElementById('nav-logo').innerText = data.logoText;
                         document.title = data.logoText;
                     }
+                    if (data.faviconUrl) {
+                        let link = document.querySelector("link[rel~='icon']");
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.rel = 'icon';
+                            document.head.appendChild(link);
+                        }
+                        link.href = data.faviconUrl;
+                    }
                     if (data.heroGreeting) document.getElementById('hero-greeting').innerText = data.heroGreeting;
                     if (data.heroTitle) document.getElementById('hero-title').innerText = data.heroTitle;
                     if (data.heroSubtitle) document.getElementById('hero-subtitle-prefix').innerText = data.heroSubtitle;
@@ -1691,6 +1726,56 @@
                 btn.style.display = 'inline-block';
                 loader.style.display = 'none';
                 showAlert('contact-alert', 'Error connecting to server. Make sure your Web App URL is correct.', false);
+            }
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+
+            const currentPwd = document.getElementById('current-password').value;
+            const newPwd = document.getElementById('new-password').value;
+            const confirmPwd = document.getElementById('confirm-password').value;
+
+            if (newPwd !== confirmPwd) {
+                showAlert('admin-settings-alert', 'New passwords do not match.', false);
+                return;
+            }
+
+            const btn = document.getElementById('btn-change-pwd');
+            const loader = document.getElementById('loader-change-pwd');
+
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+
+            const payload = {
+                action: 'changePassword',
+                data: {
+                    currentPassword: currentPwd,
+                    newPassword: newPwd
+                }
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
+                const res = await response.json();
+
+                btn.style.display = 'inline-block';
+                loader.style.display = 'none';
+                showAlert('admin-settings-alert', res.message, res.success);
+
+                if (res.success) {
+                    document.getElementById('formChangePassword').reset();
+                }
+            } catch (error) {
+                console.error("Change Password API Error: ", error);
+                btn.style.display = 'inline-block';
+                loader.style.display = 'none';
+                showAlert('admin-settings-alert', 'Error communicating with server.', false);
             }
         }
 
